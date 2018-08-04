@@ -31,6 +31,14 @@ module Kong
       @http_client = Excon.new(self.api_url, omit_default_port: true)
     end
 
+    def self.authentication_header
+      @authentication_header || {}
+    end
+
+    def self.authentication_header=(value)
+      @authentication_header = value
+    end
+
     def http_client
       self.class.http_client
     end
@@ -44,6 +52,17 @@ module Kong
 
     def api_url=(url)
       @api_url = url
+    end
+
+    # Kong Admin Authentication Key
+    #
+    # @return [String]
+    def authentication_header
+      self.class.authentication_header
+    end
+
+    def authentication_header=(value)
+      @authentication_header = value
     end
 
 
@@ -167,7 +186,7 @@ module Kong
     # @param [Hash] headers
     # @return [Hash]
     def request_headers(headers = {})
-      @default_headers.merge(headers)
+      @default_headers.merge(headers).merge(authentication_header)
     end
 
     ##
